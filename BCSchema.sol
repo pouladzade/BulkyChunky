@@ -8,21 +8,24 @@ pragma solidity ^0.4.16;
  
 contract BCSchema {
     
-    struct Struct1{
+    struct DefinitionV1{
        uint16   version;
        
        address adrs;
-       uint8   var1;
-       string  str1;
+       uint8   id;
+       string  name;
+       string  description;
+       string  bytecode;
     } 
    
-    struct Struct2{
-       
+    struct DefinitionV2{
        uint16   version;
        
        address adrs;
-       string  str1;
-       string  str2;
-       string  str3;
-    } 
+       uint8   id;
+       string  name;
+       string  description;
+       string  bytecode;
+       string  ABI;
+    }
 }

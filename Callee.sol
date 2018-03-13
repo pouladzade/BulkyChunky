@@ -11,25 +11,45 @@ import "./BCSchema.sol";
 
 contract Callee is BulkyChunky, BCSchema {
 
-    Struct1 StructData;
+    DefinitionV1 Definition;
     
-    function getData() public view returns (uint16 version,address adrs, uint8   var1, string  str1){
-        version = StructData.version;
-        adrs    = StructData.adrs;
-        var1    = StructData.var1;
-        str1    = StructData.str1;
+    function getData() public view returns (uint16 version,address adrs, uint8   id, string  name, string description, string bytecode){
+        version = Definition.version;
+        adrs    = Definition.adrs;
+        id      = Definition.id;
+        name    = Definition.name;
+        bytecode= Definition.bytecode;
+        description = Definition.description;
     }
      
-    function serialize() public {
+  function serialize() public {
         
-        StructData.version = 1;
-        StructData.adrs  = 0xcab77b4b9bf9b92a53572091c5798c570051be8f;
-        StructData.var1  = 123;
-        StructData.str1  = new string(32);
+        Definition.version  = 1;
+        Definition.adrs     = 0xcab77b4b9bf9b92a53572091c5798c570051be8f;
+        Definition.id       = 123;
+        Definition.name     = new string(32);
+        Definition.bytecode = new string(128);
+        Definition.description = new string(128);
         
-        StructData.str1  = "Hello from BulkyChunky!!!";
+        Definition.name  = "BulkyChunky";
         
-        Buffer.size = 128;
+        Definition.description = "BulkyChunky is a contract aims to facilitate transffering big amount of data between the Solidity smart contracts ";
+        
+        Definition.bytecode = "0x60606040526110cc806100136000396000f30060606040526004361061008e\
+                                576000357c010000000000000000000000000000000000000000000000000000";
+        
+        
+        
+        Buffer.size = sizeOfString(Definition.bytecode) +
+                      sizeOfString(Definition.description) +
+                      sizeOfString(Definition.name) +
+                      sizeOfUint(16) +
+                      sizeOfInt(8) + 
+                      sizeOfAddress();
+                      
+        if(Buffer.size % 32 > 0) 
+            Buffer.size +=  (Buffer.size % 32);                     
+                      
         bytes memory buffer = new bytes (Buffer.size);
         
         Buffer.chunk_count = Buffer.size / 32;
@@ -41,19 +61,27 @@ contract Callee is BulkyChunky, BCSchema {
         // Serializing
         uint offset = Buffer.size;
         
-        uintToBytes(offset,StructData.version, buffer);
+        uintToBytes(offset,Definition.version, buffer);
         offset -= sizeOfUint(16);
         
-        addressToBytes(offset,StructData.adrs, buffer);
+        addressToBytes(offset,Definition.adrs, buffer);
         offset -= sizeOfAddress();
         
-        uintToBytes(offset, StructData.var1, buffer);
+        uintToBytes(offset, Definition.id, buffer);
         offset -= sizeOfInt(8); 
         
-        stringToBytes(offset,  bytes(StructData.str1), buffer);
+        stringToBytes(offset,  bytes(Definition.name), buffer);
+        offset -= sizeOfString(Definition.name);
+        
+        stringToBytes(offset,  bytes(Definition.description), buffer);
+        offset -= sizeOfString(Definition.description);
+        
+        stringToBytes(offset,  bytes(Definition.bytecode), buffer);
+        offset -= sizeOfString(Definition.bytecode);
         
         Buffer.data = buffer;
     } 
+
     
     function deserialize() public {
         
