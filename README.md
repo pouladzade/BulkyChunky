@@ -1,5 +1,6 @@
 # BulkyChunky
-BulkyChunky is a contract aims to facilitate transffering big amount of data between the Solidity smart contracts
+BulkyChunky is a library aims to facilitate transffering big amount of data between the Solidity smart contracts. It actually slices the data and put those slices in some bulks of chunks, it's why we call it BulkyChunky!!!
+
 
 
 ### How it works ?
